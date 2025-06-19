@@ -1,5 +1,4 @@
 "use server";
-
 import { gzipSync } from "fflate";
 import * as tar from "tar-stream";
 import { promises as fs } from "fs";
@@ -11,7 +10,7 @@ export async function createTarGzArchive(files: { [key: string]: Uint8Array }) {
     const chunks: Buffer[] = [];
 
     // Collect tar stream chunks
-    pack.on("data", (chunk: any) => {
+    pack.on("data", (chunk: Buffer) => {
       chunks.push(chunk);
     });
 
@@ -111,7 +110,7 @@ export async function createArchiveFromDirectory(dirPath: string) {
 export async function createArchiveFromFormData(formData: FormData) {
   const files: { [key: string]: Uint8Array } = {};
 
-  for (const [key, value] of formData.entries()) {
+  for (const [, value] of formData.entries()) {
     if (value instanceof File) {
       const arrayBuffer = await value.arrayBuffer();
       files[value.name] = new Uint8Array(arrayBuffer);

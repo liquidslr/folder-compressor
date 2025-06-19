@@ -33,7 +33,6 @@ export default function FolderCompressor() {
     if (gitignoreFile) {
       const text = await gitignoreFile.text();
       patterns = parseGitignore(text);
-      console.log("Parsed .gitignore patterns:", patterns);
       setGitignorePatterns(patterns);
     } else {
       setGitignorePatterns([]);
