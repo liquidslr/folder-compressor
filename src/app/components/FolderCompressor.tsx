@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { buildTree, collectFiles, getAllChildPaths } from "@/app/utils/tree";
+import { parseGitignore } from "@/app/utils/gitignore";
 import { createTarGzArchive } from "@/app/actions/compression";
 import UploadSection from "./UploadSection";
 import FileTreeSection from "./FileTreeSection";
@@ -17,13 +18,29 @@ export default function FolderCompressor() {
   const [tree, setTree] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState<any>({});
+  const [gitignorePatterns, setGitignorePatterns] = useState<string[]>([]);
 
   // Handle folder upload
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
     if (!fileList) return;
 
-    const t = buildTree(fileList, []);
+    let patterns: string[] = [];
+    const gitignoreFile = Array.from(fileList).find((file) =>
+      file.webkitRelativePath.endsWith(".gitignore")
+    );
+
+    if (gitignoreFile) {
+      const text = await gitignoreFile.text();
+      patterns = parseGitignore(text);
+      console.log("Parsed .gitignore patterns:", patterns);
+      setGitignorePatterns(patterns);
+    } else {
+      setGitignorePatterns([]);
+    }
+
+    // Build tree with gitignore patterns
+    const t = buildTree(fileList, patterns);
     setTree(t);
 
     const allChecked: any = {};

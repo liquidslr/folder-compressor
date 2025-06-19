@@ -11,11 +11,9 @@
   "dependencies": {
     "fflate": "^0.8.2",
     "fs": "0.0.1-security",
-    "jszip": "^3.10.1",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tar-js": "^0.3.0",
     "tar-stream": "^3.1.7"
   },
   "devDependencies": {
