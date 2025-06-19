@@ -1,15 +1,28 @@
 import { isIgnored } from "./gitignore";
 
 // Recursively build a tree from FileList
-export function buildTree(files: FileList, gitignorePatterns: string[]) {
+export function buildTree(files: FileList, gitignorePatterns: string[] = []) {
   const tree: any = {};
   Array.from(files).forEach((file) => {
     const parts = file.webkitRelativePath.split("/");
     let current = tree;
     let path = "";
+
     for (let i = 0; i < parts.length; i++) {
       path += (i > 0 ? "/" : "") + parts[i];
-      if (isIgnored(path, gitignorePatterns)) return;
+
+      if (
+        isIgnored(path, gitignorePatterns) ||
+        isIgnored(parts[i], gitignorePatterns)
+      ) {
+        return;
+      }
+    }
+
+    current = tree;
+    path = "";
+    for (let i = 0; i < parts.length; i++) {
+      path += (i > 0 ? "/" : "") + parts[i];
       if (!current[parts[i]]) {
         current[parts[i]] = i === parts.length - 1 ? file : {};
       }
@@ -26,8 +39,6 @@ export function collectFiles(tree: any, checked: any, path = ""): File[] {
     const fullPath = path ? `${path}/${name}` : name;
     if (!checked[fullPath]) continue;
     if (value instanceof File) {
-      // Don't wrap the File in another File constructor, just use the original
-      // but ensure it has the correct webkitRelativePath
       const originalFile = value as File;
       out.push(originalFile);
     } else {
@@ -43,13 +54,11 @@ export function getAllChildPaths(tree: any, parentPath: string): string[] {
   const parentParts = parentPath.split("/");
   let current = tree;
 
-  // Navigate to the parent node
   for (const part of parentParts) {
     if (!current[part]) return paths;
     current = current[part];
   }
 
-  // Recursively collect all child paths
   function collectPaths(node: any, currentPath: string) {
     if (node instanceof File) {
       paths.push(currentPath);

@@ -9,11 +9,8 @@ export const IGNORE_PATTERNS = [
   "*.log",
   "npm-debug.log",
   "yarn-error.log",
-  "pnpm-lock.yaml",
-  "package-lock.json",
   "*.tmp",
   "*.swp",
 ];
 
-// Files to always read (even if in ignore patterns)
 export const ALWAYS_READ_FILES = [".gitignore", "README.md"];

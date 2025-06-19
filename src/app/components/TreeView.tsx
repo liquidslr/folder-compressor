@@ -1,5 +1,5 @@
-"use client";
-import React from "react";
+import FolderIcon from "./icons/FolderIcon";
+import FileIcon from "./icons/FileIcon";
 
 type TreeViewProps = {
   tree: any;
@@ -21,13 +21,19 @@ const TreeView: React.FC<TreeViewProps> = ({
         const isFile = value instanceof File;
         return (
           <li key={fullPath} className="my-1">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
               <input
                 type="checkbox"
                 checked={checked[fullPath] ?? true}
                 onChange={() => onToggle(fullPath)}
+                className="rounded"
               />
-              {name}
+              {isFile ? (
+                <FileIcon className="w-4 h-4 text-blue-500" />
+              ) : (
+                <FolderIcon className="w-4 h-4 text-yellow-600" />
+              )}
+              <span className="text-sm">{name}</span>
             </label>
             {!isFile && (
               <TreeView
